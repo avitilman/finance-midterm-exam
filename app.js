@@ -9,7 +9,8 @@
     questions: [],
     closeAt: null,
     backendCloseAt: null,
-    receipt: null
+    receipt: null,
+    secret: new URLSearchParams(window.location.search).get("secret") || ""
   };
 
   const els = {
@@ -149,7 +150,9 @@
     }
     els.loginForm.querySelector("button").disabled = true;
     try {
-      const response = await jsonp({ action: "start", studentId, studentName });
+      const params = { action: "start", studentId, studentName };
+      if (state.secret) params.secret = state.secret;
+      const response = await jsonp(params);
       if (!response.ok) throw new Error(response.error || "לא ניתן להתחיל את הבחינה");
       state.studentId = studentId;
       state.studentName = studentName;
@@ -175,13 +178,15 @@
     els.submitExam.disabled = true;
     try {
       const answers = JSON.stringify(collectAnswers());
-      const response = await jsonp({
+      const params = {
         action: "submit",
         studentId: state.studentId,
         studentName: state.studentName,
         token: state.token,
         answers
-      });
+      };
+      if (state.secret) params.secret = state.secret;
+      const response = await jsonp(params);
       if (!response.ok) throw new Error(response.error || "ההגשה נכשלה");
       state.receipt = response;
       els.exam.classList.add("hidden");

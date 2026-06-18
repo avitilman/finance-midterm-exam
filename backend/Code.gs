@@ -11,9 +11,9 @@ function doGet(e) {
   try {
     const action = e.parameter.action;
     if (action === "start") {
-      payload = startExam_(e.parameter.studentId, e.parameter.studentName);
+      payload = startExam_(e.parameter.studentId, e.parameter.studentName, e.parameter.secret);
     } else if (action === "submit") {
-      payload = submitExam_(e.parameter.studentId, e.parameter.studentName, e.parameter.token, e.parameter.answers);
+      payload = submitExam_(e.parameter.studentId, e.parameter.studentName, e.parameter.token, e.parameter.answers, e.parameter.secret);
     } else if (action === "getResults") {
       payload = getResults_(e.parameter.secret);
     } else if (action === "inspect") {
@@ -29,8 +29,8 @@ function doGet(e) {
     .setMimeType(ContentService.MimeType.JAVASCRIPT);
 }
 
-function startExam_(studentId, studentName) {
-  validateWindow_(false);
+function startExam_(studentId, studentName, bypassSecret) {
+  validateWindow_(false, bypassSecret);
   validateStudentId_(studentId);
   validateStudentName_(studentName);
   const exam = buildExam_(studentId);
@@ -48,8 +48,8 @@ function startExam_(studentId, studentName) {
   };
 }
 
-function submitExam_(studentId, studentName, token, answersJson) {
-  validateWindow_(true);
+function submitExam_(studentId, studentName, token, answersJson, bypassSecret) {
+  validateWindow_(true, bypassSecret);
   validateStudentId_(studentId);
   validateStudentName_(studentName);
   if (token !== makeToken_(studentId)) throw new Error("אסימון בחינה לא תקין");
@@ -80,7 +80,10 @@ function submitExam_(studentId, studentName, token, answersJson) {
   };
 }
 
-function validateWindow_(isSubmit) {
+function validateWindow_(isSubmit, bypassSecret) {
+  if (bypassSecret && bypassSecret === CONFIG.secret) {
+    return; // Bypass validation for testing
+  }
   const now = new Date();
   const openAt = new Date(CONFIG.openAt);
   const closeAt = new Date(CONFIG.closeAt);
