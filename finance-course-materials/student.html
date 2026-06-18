@@ -1,0 +1,962 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>מבחן אמצע במימון - יסודות המימון</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Rubik:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+            --panel-bg: rgba(30, 41, 59, 0.7);
+            --panel-border: rgba(255, 255, 255, 0.08);
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --accent-primary: #6366f1;
+            --accent-secondary: #a855f7;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --font-main: 'Rubik', sans-serif;
+            --font-num: 'Outfit', sans-serif;
+            --card-radius: 16px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        body.light-theme {
+            --bg-gradient: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+            --panel-bg: rgba(255, 255, 255, 0.85);
+            --panel-border: rgba(15, 23, 42, 0.08);
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --accent-primary: #4f46e5;
+            --accent-secondary: #9333ea;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-main);
+            background: var(--bg-gradient);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+            transition: background 0.5s ease;
+        }
+
+        header {
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--panel-border);
+            backdrop-filter: blur(8px);
+            z-index: 10;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-num);
+            font-weight: 700;
+            color: white;
+            font-size: 20px;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+        }
+
+        .logo-title h1 {
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .logo-title p {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .nav-controls {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-family: var(--font-main);
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-size: 14px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            color: white;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(99, 102, 241, 0.35);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--panel-border);
+            color: var(--text-primary);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-1px);
+        }
+
+        .theme-toggle {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--text-primary);
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 8px;
+            border-radius: 50%;
+            transition: var(--transition);
+        }
+
+        .theme-toggle:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        main {
+            flex: 1;
+            padding: 40px 20px;
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .glass-panel {
+            background: var(--panel-bg);
+            border: 1px solid var(--panel-border);
+            border-radius: var(--card-radius);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(16px);
+            padding: 40px;
+            width: 100%;
+            transition: var(--transition);
+        }
+
+        .login-container {
+            max-width: 500px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .login-container h2 {
+            font-size: 28px;
+            margin-bottom: 8px;
+            font-weight: 700;
+        }
+
+        .login-container p {
+            color: var(--text-secondary);
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            text-align: right;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            font-size: 14px;
+            color: var(--text-primary);
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 14px 16px;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--panel-border);
+            color: var(--text-primary);
+            font-family: var(--font-main);
+            font-size: 16px;
+            transition: var(--transition);
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+            background: rgba(255, 255, 255, 0.06);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+        }
+
+        .exam-layout {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 30px;
+        }
+
+        @media (max-width: 900px) {
+            .exam-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .sidebar-nav {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .student-info-box {
+            padding: 16px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--panel-border);
+            border-radius: 12px;
+        }
+
+        .student-info-box h3 {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .student-info-box p {
+            font-size: 13px;
+            color: var(--text-secondary);
+            font-family: var(--font-num);
+        }
+
+        .question-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+        }
+
+        .q-nav-btn {
+            aspect-ratio: 1;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--panel-border);
+            color: var(--text-primary);
+            font-family: var(--font-num);
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .q-nav-btn:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: var(--text-secondary);
+        }
+
+        .q-nav-btn.active {
+            background: var(--accent-primary);
+            border-color: var(--accent-primary);
+            color: white;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2);
+        }
+
+        .q-nav-btn.answered {
+            background: rgba(99, 102, 241, 0.15);
+            border-color: rgba(99, 102, 241, 0.4);
+        }
+
+        .calc-widget {
+            padding: 16px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--panel-border);
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .calc-widget h4 {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .calc-display {
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--panel-border);
+            border-radius: 6px;
+            padding: 10px;
+            text-align: left;
+            font-family: var(--font-num);
+            font-size: 16px;
+            min-height: 40px;
+            word-wrap: break-word;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+        }
+
+        .calc-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 6px;
+        }
+
+        .calc-btn {
+            padding: 8px;
+            border-radius: 6px;
+            border: 1px solid var(--panel-border);
+            background: rgba(255, 255, 255, 0.02);
+            color: var(--text-primary);
+            font-family: var(--font-num);
+            font-weight: 500;
+            font-size: 14px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .calc-btn:hover {
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .calc-btn.op {
+            background: rgba(99, 102, 241, 0.1);
+            color: #818cf8;
+        }
+
+        .calc-btn.eq {
+            background: var(--accent-primary);
+            color: white;
+            grid-column: span 2;
+        }
+
+        .question-card {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .q-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--panel-border);
+            padding-bottom: 16px;
+        }
+
+        .q-title {
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .q-topic {
+            font-size: 13px;
+            padding: 4px 10px;
+            border-radius: 12px;
+            background: rgba(99, 102, 241, 0.1);
+            color: #818cf8;
+            font-weight: 500;
+        }
+
+        .q-text {
+            font-size: 17px;
+            line-height: 1.6;
+        }
+
+        .q-text code {
+            font-family: var(--font-num);
+            background: rgba(255, 255, 255, 0.05);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 90%;
+            direction: ltr;
+            display: inline-block;
+        }
+
+        .options-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .option-item {
+            display: flex;
+            align-items: center;
+            padding: 16px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--panel-border);
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .option-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: var(--accent-primary);
+        }
+
+        .option-item.selected {
+            background: rgba(99, 102, 241, 0.08);
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 1px var(--accent-primary);
+        }
+
+        .option-radio {
+            margin-left: 14px;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            border: 2px solid var(--text-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+            flex-shrink: 0;
+        }
+
+        .option-item.selected .option-radio {
+            border-color: var(--accent-primary);
+        }
+
+        .option-item.selected .option-radio::after {
+            content: '';
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--accent-primary);
+        }
+
+        .option-label {
+            font-size: 16px;
+            font-family: var(--font-num);
+            font-weight: 500;
+            direction: ltr;
+            text-align: right;
+            width: 100%;
+        }
+
+        .navigation-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
+            border-top: 1px solid var(--panel-border);
+            padding-top: 20px;
+        }
+
+        .success-panel {
+            text-align: center;
+            max-width: 650px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .success-icon {
+            font-size: 64px;
+            color: var(--success);
+            line-height: 1;
+        }
+
+        .token-container {
+            background: rgba(0, 0, 0, 0.15);
+            border: 1px solid var(--panel-border);
+            border-radius: 12px;
+            padding: 24px;
+            text-align: right;
+        }
+
+        .token-container h3 {
+            font-size: 16px;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+
+        .token-text {
+            width: 100%;
+            height: 90px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--panel-border);
+            border-radius: 8px;
+            padding: 12px;
+            font-family: var(--font-num);
+            font-size: 13px;
+            color: var(--text-primary);
+            resize: none;
+            margin-bottom: 12px;
+            word-break: break-all;
+        }
+
+        .lock-container {
+            max-width: 500px;
+            margin: 40px auto;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .lock-icon {
+            font-size: 72px;
+            color: var(--danger);
+        }
+
+        footer {
+            padding: 20px;
+            text-align: center;
+            font-size: 12px;
+            color: var(--text-secondary);
+            border-top: 1px solid var(--panel-border);
+            margin-top: 40px;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo-section">
+            <div class="logo-icon">$</div>
+            <div class="logo-title">
+                <h1>מבחן אמצע במימון</h1>
+                <p>הערכת ביצועים - סמסטר ב'</p>
+            </div>
+        </div>
+        <div class="nav-controls">
+            <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle Theme">🌓</button>
+        </div>
+    </header>
+
+    <main>
+        <!-- TIME WINDOW LOCKED VIEW -->
+        <div id="lockScreen" class="glass-panel lock-container hidden">
+            <div class="lock-icon">🔒</div>
+            <h2 style="font-size: 24px; font-weight: 700;">הבחינה נעולה כעת</h2>
+            <p id="lockMessage" style="color: var(--text-secondary); font-size: 15px; line-height: 1.6;">
+                גישה למבחן אינה זמינה כעת. 
+            </p>
+        </div>
+
+        <!-- EXAM ACTIVE FLOW -->
+        <section id="studentFlow">
+            <!-- 1. LOGIN SCREEN -->
+            <div id="loginScreen" class="glass-panel login-container">
+                <h2>ברוכים הבאים למבחן האמצע</h2>
+                <p>אנא הזן את פרטיך האישיים כדי להתחיל את הבחינה. תעודת הזהות משמשת לערבול השאלות באופן ייחודי.</p>
+                
+                <form id="loginForm" onsubmit="startExam(event)">
+                    <div class="form-group">
+                        <label for="studentName">שם מלא (עברית):</label>
+                        <input type="text" id="studentName" class="form-input" required placeholder="ישראל ישראלי">
+                    </div>
+                    <div class="form-group">
+                        <label for="studentId">מספר תעודת זהות:</label>
+                        <input type="text" id="studentId" class="form-input" required pattern="[0-9]{8,9}" placeholder="123456789" style="font-family: var(--font-num); direction: ltr; text-align: right;">
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width: 100%; padding: 14px; margin-top: 10px;">התחל בחינה</button>
+                </form>
+            </div>
+
+            <!-- 2. EXAM ACTIVE SCREEN -->
+            <div id="examScreen" class="exam-layout hidden">
+                <!-- Sidebar Controls -->
+                <aside class="sidebar-nav">
+                    <div class="student-info-box">
+                        <h3 id="displayStudentName">שם סטודנט</h3>
+                        <p id="displayStudentId">ת.ז. 000000000</p>
+                    </div>
+
+                    <div class="question-grid" id="navGrid"></div>
+
+                    <!-- Calculator Utility -->
+                    <div class="calc-widget">
+                        <h4>🔢 מחשבון עזר</h4>
+                        <div class="calc-display" id="calcDisplay">0</div>
+                        <div class="calc-grid">
+                            <button class="calc-btn op" onclick="pressCalc('C')">C</button>
+                            <button class="calc-btn op" onclick="pressCalc('(')">(</button>
+                            <button class="calc-btn op" onclick="pressCalc(')')">)</button>
+                            <button class="calc-btn op" onclick="pressCalc('/')">/</button>
+                            <button class="calc-btn" onclick="pressCalc('7')">7</button>
+                            <button class="calc-btn" onclick="pressCalc('8')">8</button>
+                            <button class="calc-btn" onclick="pressCalc('9')">9</button>
+                            <button class="calc-btn op" onclick="pressCalc('*')">*</button>
+                            <button class="calc-btn" onclick="pressCalc('4')">4</button>
+                            <button class="calc-btn" onclick="pressCalc('5')">5</button>
+                            <button class="calc-btn" onclick="pressCalc('6')">6</button>
+                            <button class="calc-btn op" onclick="pressCalc('-')">-</button>
+                            <button class="calc-btn" onclick="pressCalc('1')">1</button>
+                            <button class="calc-btn" onclick="pressCalc('2')">2</button>
+                            <button class="calc-btn" onclick="pressCalc('3')">3</button>
+                            <button class="calc-btn op" onclick="pressCalc('+')">+</button>
+                            <button class="calc-btn" onclick="pressCalc('0')">0</button>
+                            <button class="calc-btn" onclick="pressCalc('.')">.</button>
+                            <button class="calc-btn eq" onclick="pressCalc('=')">=</button>
+                        </div>
+                    </div>
+                </aside>
+
+                <!-- Active Question Viewer -->
+                <div class="glass-panel">
+                    <div class="question-card">
+                        <div class="q-header">
+                            <div class="q-title" id="qNumber">שאלה 1 מתוך 11</div>
+                            <div class="q-topic" id="qTopic">נושא השאלה</div>
+                        </div>
+                        <div class="q-text" id="qText">טקסט השאלה יופיע כאן...</div>
+                        
+                        <div class="options-list" id="optionsList"></div>
+
+                        <div class="navigation-row">
+                            <button class="btn btn-secondary" id="prevBtn" onclick="prevQuestion()">שאלה הקודמת</button>
+                            <button class="btn btn-primary" id="nextBtn" onclick="nextQuestion()">הבא</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. EXAM SUCCESS SCREEN -->
+            <div id="successScreen" class="glass-panel success-panel hidden">
+                <div class="success-icon">✓</div>
+                <h2>הבחינה הושלמה בהצלחה!</h2>
+                <p>סיימת את פתרון 11 השאלות במבחן האמצע במימון.</p>
+
+                <div class="token-container">
+                    <h3>קוד הגשה לסטודנט:</h3>
+                    <p style="color: var(--text-secondary); font-size: 13px; margin-bottom: 12px;">
+                        עליך להעתיק את קוד ההגשה הבא במלואו ולהגיש אותו בתיבת ההגשה ב-Moodle.
+                    </p>
+                    <textarea class="token-text" id="tokenText" readonly onclick="this.select()"></textarea>
+                    <button class="btn btn-primary" onclick="copyToken()">העתק קוד הגשה לקליפבורד</button>
+                    <span id="copyFeedback" style="color: var(--success); font-size: 13px; margin-right: 12px; font-weight: 500; display: none;">הועתק!</span>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>© 2026 קורס יסודות המימון | אוניברסיטת בר-אילן</p>
+    </footer>
+
+    <script src="questions.js"></script>
+    <script>
+        // ==========================================
+        // הגדרות חלון זמן למבחן (שנה, חודש 0-11, יום, שעות, דקות)
+        // ==========================================
+        const EXAM_CONFIG = {
+            useTimeWindow: true, // שנה ל-true כדי לחסום כניסה מחוץ לטווח שעות מסוים
+            start: new Date(2026, 5, 22, 9, 50, 0), // 22 ביוני 2026 בשעה 09:50
+            end: new Date(2026, 5, 22, 10, 40, 0),   // 22 ביוני 2026 בשעה 10:40
+            appsScriptUrl: "https://script.google.com/macros/s/AKfycbyyqRyjZC2mso8fB94WdHe9I7RAj2cZtXHO_7Grm9xsekXSdrTbH9zdyaZq2BfhKP74/exec" // הדבק כאן את כתובת ה-Web App של Google Sheets לשמירה אוטומטית של קודי הגשה
+        };
+
+        let currentStudent = { name: '', id: '' };
+        let examQuestions = [];
+        let studentAnswers = [];
+        let currentQuestionIdx = 0;
+        let calcVal = '';
+
+        // Initialize theme from system preference
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
+            document.body.classList.add('light-theme');
+        }
+
+        function toggleTheme() {
+            document.body.classList.toggle('light-theme');
+        }
+
+        // Validate time window immediately on load
+        window.addEventListener('DOMContentLoaded', validateTimeWindow);
+
+        async function validateTimeWindow() {
+            if (!EXAM_CONFIG.useTimeWindow) return;
+
+            let currentTime = new Date();
+
+            // Attempt to fetch from network time API for security
+            try {
+                const response = await fetch('https://worldtimeapi.org/api/timezone/Asia/Jerusalem', { timeout: 3000 });
+                if (response.ok) {
+                    const data = await response.json();
+                    currentTime = new Date(data.datetime);
+                }
+            } catch (err) {
+                console.log("Could not contact world time API. Falling back to local system clock.");
+            }
+
+            const startTime = EXAM_CONFIG.start;
+            const endTime = EXAM_CONFIG.end;
+
+            if (currentTime < startTime || currentTime > endTime) {
+                document.getElementById('studentFlow').classList.add('hidden');
+                const lockScreen = document.getElementById('lockScreen');
+                const lockMessage = document.getElementById('lockMessage');
+                lockScreen.classList.remove('hidden');
+
+                const formatOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
+                lockMessage.innerHTML = `
+                    גישה למבחן אינה זמינה כעת.<br/>
+                    <strong>חלון זמן המבחן המאושר:</strong><br/>
+                    החל מ: ${startTime.toLocaleString('he-IL', formatOptions)}<br/>
+                    עד ל: ${endTime.toLocaleString('he-IL', formatOptions)}<br/><br/>
+                    זמן המערכת הנוכחי: ${currentTime.toLocaleString('he-IL', formatOptions)}
+                `;
+            }
+        }
+
+        function startExam(e) {
+            e.preventDefault();
+            const name = document.getElementById('studentName').value.trim();
+            const id = document.getElementById('studentId').value.trim();
+
+            if (!name || id.length < 8) {
+                alert("אנא הזן שם מלא ותעודת זהות תקנית.");
+                return;
+            }
+
+            currentStudent = { name, id };
+            document.getElementById('displayStudentName').textContent = name;
+            document.getElementById('displayStudentId').textContent = "ת.ז. " + id;
+
+            // Generate questions (passing includeAnswers = false for absolute safety)
+            examQuestions = window.FinanceExam.generateExam(id, false);
+            studentAnswers = new Array(examQuestions.length).fill(null);
+            currentQuestionIdx = 0;
+
+            document.getElementById('loginScreen').classList.add('hidden');
+            document.getElementById('examScreen').classList.remove('hidden');
+
+            renderNavGrid();
+            renderQuestion();
+        }
+
+        function renderNavGrid() {
+            const grid = document.getElementById('navGrid');
+            grid.innerHTML = '';
+            examQuestions.forEach((q, idx) => {
+                const btn = document.createElement('button');
+                btn.className = `q-nav-btn ${idx === currentQuestionIdx ? 'active' : ''} ${studentAnswers[idx] !== null ? 'answered' : ''}`;
+                btn.textContent = q.id;
+                btn.onclick = () => jumpToQuestion(idx);
+                grid.appendChild(btn);
+            });
+        }
+
+        function renderQuestion() {
+            const q = examQuestions[currentQuestionIdx];
+            document.getElementById('qNumber').textContent = `שאלה ${q.id} מתוך ${examQuestions.length}`;
+            document.getElementById('qTopic').textContent = q.topic;
+            document.getElementById('qText').innerHTML = q.text;
+
+            const list = document.getElementById('optionsList');
+            list.innerHTML = '';
+            q.choices.forEach((choice, idx) => {
+                const item = document.createElement('div');
+                item.className = `option-item ${studentAnswers[currentQuestionIdx] === idx ? 'selected' : ''}`;
+                item.onclick = () => selectOption(idx);
+
+                const radio = document.createElement('div');
+                radio.className = 'option-radio';
+
+                const label = document.createElement('span');
+                label.className = 'option-label';
+                label.textContent = choice;
+
+                item.appendChild(radio);
+                item.appendChild(label);
+                list.appendChild(item);
+            });
+
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            
+            if (currentQuestionIdx === 0) {
+                prevBtn.setAttribute('disabled', 'true');
+                prevBtn.style.opacity = '0.5';
+            } else {
+                prevBtn.removeAttribute('disabled');
+                prevBtn.style.opacity = '1';
+            }
+
+            if (currentQuestionIdx === examQuestions.length - 1) {
+                nextBtn.textContent = "סיים והגש";
+                nextBtn.classList.remove('btn-primary');
+                nextBtn.classList.add('btn-success');
+                nextBtn.style.background = 'var(--success)';
+            } else {
+                nextBtn.textContent = "שאלה הבאה";
+                nextBtn.style.background = '';
+                nextBtn.classList.remove('btn-success');
+                nextBtn.classList.add('btn-primary');
+            }
+        }
+
+        function selectOption(idx) {
+            studentAnswers[currentQuestionIdx] = idx;
+            renderNavGrid();
+            renderQuestion();
+        }
+
+        function jumpToQuestion(idx) {
+            currentQuestionIdx = idx;
+            renderNavGrid();
+            renderQuestion();
+        }
+
+        function prevQuestion() {
+            if (currentQuestionIdx > 0) {
+                currentQuestionIdx--;
+                renderNavGrid();
+                renderQuestion();
+            }
+        }
+
+        function nextQuestion() {
+            if (currentQuestionIdx === examQuestions.length - 1) {
+                if (studentAnswers.includes(null)) {
+                    const unanswered = studentAnswers.map((a, i) => a === null ? i + 1 : null).filter(x => x !== null);
+                    const confirmSubmit = confirm(`שים לב! לא ענית על השאלות הבאות: ${unanswered.join(', ')}. האם אתה בטוח שברצונך להגיש?`);
+                    if (!confirmSubmit) return;
+                } else {
+                    const confirmSubmit = confirm("האם אתה בטוח שברצונך להגיש את המבחן?");
+                    if (!confirmSubmit) return;
+                }
+                submitExam();
+            } else {
+                currentQuestionIdx++;
+                renderNavGrid();
+                renderQuestion();
+            }
+        }
+
+        function submitExam() {
+            // Package student answers (without grade keys!)
+            const submissionData = {
+                id: currentStudent.id,
+                name: currentStudent.name,
+                answers: studentAnswers,
+                timestamp: Date.now()
+            };
+
+            const jsonStr = JSON.stringify(submissionData);
+            const base64Code = btoa(encodeURIComponent(jsonStr).replace(/%([0-9A-F]{2})/g, (match, p1) => {
+                return String.fromCharCode(parseInt(p1, 16));
+            }));
+
+            document.getElementById('examScreen').classList.add('hidden');
+            document.getElementById('successScreen').classList.remove('hidden');
+            document.getElementById('tokenText').value = base64Code;
+
+            // Auto-submit to Google Sheets
+            if (EXAM_CONFIG.appsScriptUrl) {
+                const statusMsg = document.createElement('p');
+                statusMsg.id = 'sheetSubmitStatus';
+                statusMsg.style.fontSize = '13px';
+                statusMsg.style.marginTop = '12px';
+                statusMsg.style.fontWeight = '500';
+                statusMsg.style.color = 'var(--text-secondary)';
+                statusMsg.textContent = 'שומר את תשובותיך בגיליון Google Sheets...';
+                document.querySelector('.token-container').appendChild(statusMsg);
+
+                fetch(EXAM_CONFIG.appsScriptUrl, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        id: currentStudent.id,
+                        name: currentStudent.name,
+                        code: base64Code,
+                        timestamp: Date.now()
+                    })
+                }).then(() => {
+                    statusMsg.style.color = 'var(--success)';
+                    statusMsg.textContent = '✓ תשובותיך נשמרו בגיליון בהצלחה!';
+                }).catch(err => {
+                    statusMsg.style.color = 'var(--danger)';
+                    statusMsg.textContent = '⚠ שגיאה בשמירה אוטומטית בגיליון. אנא העתק את קוד ההגשה ידנית.';
+                    console.error(err);
+                });
+            }
+        }
+
+        function copyToken() {
+            const textarea = document.getElementById('tokenText');
+            textarea.select();
+            document.execCommand('copy');
+            
+            const feedback = document.getElementById('copyFeedback');
+            feedback.style.display = 'inline';
+            setTimeout(() => {
+                feedback.style.display = 'none';
+            }, 2000);
+        }
+
+        function pressCalc(char) {
+            const display = document.getElementById('calcDisplay');
+            if (char === 'C') {
+                calcVal = '';
+                display.textContent = '0';
+            } else if (char === '=') {
+                try {
+                    let sanitized = calcVal.replace(/[^0-9+\-*/().]/g, '');
+                    let res = Function(`"use strict"; return (${sanitized})`)();
+                    if (res === undefined || isNaN(res)) {
+                        display.textContent = 'Error';
+                    } else {
+                        display.textContent = Math.round(res * 10000) / 10000;
+                        calcVal = display.textContent;
+                    }
+                } catch (err) {
+                    display.textContent = 'Error';
+                }
+            } else {
+                calcVal += char;
+                display.textContent = calcVal;
+            }
+        }
+    </script>
+</body>
+</html>

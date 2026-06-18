@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>בחינת אמצע במימון - הארכת זמן</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="shell">
+    <section class="intro" id="intro">
+      <div>
+        <p class="eyebrow">יסודות המימון</p>
+        <h1>בחינת אמצע במימון (הארכת זמן)</h1>
+        <p class="meta">22.6.2026, 09:45-10:45</p>
+      </div>
+      <form class="login" id="loginForm">
+        <label for="studentName">שם מלא</label>
+        <input id="studentName" name="studentName" autocomplete="off" required>
+
+        <label for="studentId">תעודת זהות</label>
+        <input id="studentId" name="studentId" inputmode="numeric" autocomplete="off" maxlength="10" required>
+
+        <button type="submit">כניסה לבחינה</button>
+        <p class="hint">כל סטודנט מקבל מספרים וסדר שאלות שונים לפי תעודת הזהות.</p>
+      </form>
+    </section>
+
+    <section class="exam hidden" id="exam">
+      <header class="examHeader">
+        <div>
+          <p class="eyebrow" id="courseName">בחינת אמצע במימון (הארכת זמן)</p>
+          <h2 id="studentTitle"></h2>
+        </div>
+        <div class="timer" id="timer">--:--</div>
+      </header>
+      <div class="notice" id="notice"></div>
+      <form id="examForm" class="questions"></form>
+      <div class="actions">
+        <button type="button" id="submitExam">הגשת הבחינה</button>
+      </div>
+    </section>
+
+    <section class="result hidden" id="result">
+      <h2>הבחינה הוגשה</h2>
+      <p id="resultText"></p>
+      <button type="button" id="downloadReceipt">הורדת אישור הגשה</button>
+    </section>
+  </main>
+  <script src="config-extra.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
