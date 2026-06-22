@@ -10,7 +10,7 @@
     closeAt: null,
     backendCloseAt: null,
     receipt: null,
-    secret: new URLSearchParams(window.location.search).get("secret") || ""
+    secret: new URLSearchParams(window.location.search).get("secret") || sessionStorage.getItem("lecturer_secret") || ""
   };
 
   const els = {
@@ -34,6 +34,21 @@
   const metaEl = document.querySelector(".intro .meta");
   if (metaEl && config.examDateLabel && config.examWindowLabel) {
     metaEl.textContent = config.examDateLabel + ", " + config.examWindowLabel;
+  }
+
+  if (state.secret) {
+    const testModeIndicator = document.createElement("div");
+    testModeIndicator.style.background = "rgba(16, 185, 129, 0.15)";
+    testModeIndicator.style.border = "1px solid var(--success)";
+    testModeIndicator.style.color = "#10b981";
+    testModeIndicator.style.padding = "12px";
+    testModeIndicator.style.borderRadius = "8px";
+    testModeIndicator.style.marginBottom = "20px";
+    testModeIndicator.style.textAlign = "center";
+    testModeIndicator.style.fontWeight = "bold";
+    testModeIndicator.style.fontSize = "14px";
+    testModeIndicator.textContent = "⚡ מצב בדיקת מרצה פעיל (עוקף מגבלת זמן) ⚡";
+    els.loginForm.parentNode.insertBefore(testModeIndicator, els.loginForm);
   }
 
   function jsonp(params) {
