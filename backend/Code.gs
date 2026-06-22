@@ -2,7 +2,7 @@ const CONFIG = {
   sheetName: "ציוני בחינת אמצע במימון",
   openAt: "2026-06-22T09:45:00+03:00",
   closeAt: "2026-06-22T11:00:00+03:00",
-  secret: "CHANGE_ME_TO_A_PRIVATE_RANDOM_TEXT"
+  secret: "itaitillman"
 };
 
 function doGet(e) {
@@ -127,16 +127,34 @@ function getResults_(secret) {
   const lastRow = sheet.getLastRow();
   if (lastRow < 2) return { ok: true, results: [] };
   const data = sheet.getRange(2, 1, lastRow - 1, 8).getValues();
-  const results = data.map(row => ({
-    submittedAt: row[0] instanceof Date ? row[0].toISOString() : String(row[0]),
-    studentId: String(row[1]),
-    studentName: String(row[2]),
-    score: Number(row[3]),
-    maxScore: Number(row[4]),
-    receiptId: String(row[5]),
-    details: JSON.parse(row[6] || "[]"),
-    answers: JSON.parse(row[7] || "{}")
-  }));
+  const results = data.map((row, index) => {
+    const studentId = String(row[1]);
+    const studentName = String(row[2]);
+    const savedScore = Number(row[3]);
+    const answers = JSON.parse(row[7] || "{}");
+    
+    // Regrade dynamically to fix any past grading bugs
+    const exam = buildExam_(studentId);
+    const graded = grade_(exam.questions, answers);
+    
+    if (graded.score !== savedScore) {
+      sheet.getRange(index + 2, 4).setValue(graded.score);
+      sheet.getRange(index + 2, 7).setValue(JSON.stringify(graded.details));
+      row[3] = graded.score;
+      row[6] = JSON.stringify(graded.details);
+    }
+    
+    return {
+      submittedAt: row[0] instanceof Date ? row[0].toISOString() : String(row[0]),
+      studentId: studentId,
+      studentName: studentName,
+      score: graded.score,
+      maxScore: Number(row[4]),
+      receiptId: String(row[5]),
+      details: graded.details,
+      answers: answers
+    };
+  });
   return { ok: true, results };
 }
 
@@ -434,10 +452,20 @@ function qBond_(rnd) {
   const text = `אג"ח בערך נקוב 100 ש"ח משלמת קופון שנתי של ${pct_(couponRate)} למשך ${years} שנים. התשואה לפדיון היא ${pct_(ytm)}. מה מחיר האג"ח היום?`;
   
   const correctText = `${round_(answer, 2)} ש"ח`;
+  
+  let dist1 = fv;
+  let dist2 = c * (1 - Math.pow(1 + ytm, -years)) / ytm + fv;
+  let dist3 = fv / Math.pow(1 + ytm, years);
+  
+  // Resolve duplicates to prevent two identical choice texts
+  if (Math.abs(dist1 - answer) < 0.01) dist1 = fv + 10;
+  if (Math.abs(dist2 - answer) < 0.01) dist2 = dist2 + 10;
+  if (Math.abs(dist3 - answer) < 0.01) dist3 = dist3 + 10;
+  
   const distractors = [
-    `${money_(fv)} ש"ח`,
-    `${round_(c * (1 - Math.pow(1 + ytm, -years)) / ytm + fv, 2)} ש"ח`,
-    `${round_(fv / Math.pow(1 + ytm, years), 2)} ש"ח`
+    `${money_(dist1)} ש"ח`,
+    `${round_(dist2, 2)} ש"ח`,
+    `${round_(dist3, 2)} ש"ח`
   ];
   
   return multipleChoiceQuestion_(rnd, "q10", "אגח קופון", text, correctText, distractors, 10);
@@ -478,10 +506,26 @@ function grade_(questions, answers) {
   let score = 0;
   let maxScore = 0;
   const details = [];
+  const letters = ["א", "ב", "ג", "ד"];
   questions.forEach(q => {
     maxScore += q.points;
     const submitted = String(answers[q.id] || "").trim();
-    const ok = submitted === q.correctLetter;
+    
+    // Find text of submitted choice
+    let submittedText = "";
+    const submittedIndex = letters.indexOf(submitted);
+    if (submittedIndex !== -1 && q.choices && q.choices[submittedIndex]) {
+      submittedText = q.choices[submittedIndex].replace(/^[אבגד]\.\s*/, "").trim();
+    }
+    
+    // Find text of expected correct choice
+    let expectedText = "";
+    const expectedIndex = letters.indexOf(q.correctLetter);
+    if (expectedIndex !== -1 && q.choices && q.choices[expectedIndex]) {
+      expectedText = q.choices[expectedIndex].replace(/^[אבגד]\.\s*/, "").trim();
+    }
+    
+    const ok = (submitted === q.correctLetter) || (submittedText !== "" && submittedText === expectedText);
     if (ok) score += q.points;
     details.push({
       id: q.id,
